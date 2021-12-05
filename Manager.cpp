@@ -13,13 +13,98 @@ Manager::~Manager()
 void Manager::Run(const char* filepath)
 {
     fout.open(RESULT_LOG_PATH);
-    ferr.open(ERROR_LOG_PATH);
+    ferr.open(ERROR_LOG_PATH, ios::app);
 
-    // TODO: implement
+    ifstream fin;
+    fin.open(filepath);
+
+    if(!fin.is_open()){
+        ferr << "====== SYSTEM ======" << endl <<
+        "CommandFileNotExist" << endl <<
+        "====================" << endl;
+        return;
+    }
+
+    char cmd[50];
+    char* pCmd;
+    string comparedString;
+
+    while(!fin.eof()){
+        fin.getline(cmd, 50);
+        pCmd = strtok(cmd, " ");
+
+        if(pCmd == nullptr){
+            continue;
+        }
+        else if(pCmd[0] == '/' && pCmd[1] == '/'){
+            continue;
+        }
+        else if(strcmp(pCmd, "LOAD") == 0){
+            pCmd = strtok(NULL, " ");
+            PrintError(Load(pCmd));
+        }
+        else if(strcmp(pCmd, "LOADREPORT") == 0){
+            fout << "====== LOADREPORT ======" << endl;
+            pCmd = strtok(NULL, " ");
+            ifstream fcompare;
+            fcompare.open(pCmd);
+            int state = 0;
+
+            if(!fcompare.is_open()){
+                fout << "FaildtoUpdatePath" << endl;
+                fout << "====================" << endl;
+                PrintError(FaildtoUpdatePath);
+            }
+            else{
+                comparedString.clear();
+                char ch;
+                while(!fcompare.eof()){
+                    fcompare.get(ch);
+                    comparedString.push_back(ch);
+                }
+                fout << "Success" << endl;
+                fout << "====================" << endl;
+                PrintError(Success);
+            } 
+        }
+        else if(strcmp(pCmd, "PRINT") == 0){
+            PrintError(Print());
+        }
+        else if(strcmp(pCmd, "BFS") == 0){
+            pCmd = strtok(NULL, " ");
+            int start = pCmd == nullptr ? IN_FINITY : 0;
+            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            PrintError(FindPathBfs(start, end));
+        }
+        else if(strcmp(pCmd, "DIJKKSTRA") == 0){
+            pCmd = strtok(NULL, " ");
+            int start = pCmd == nullptr ? IN_FINITY : 0;
+            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            PrintError(FindShortestPathDijkstraUsingSet(start, end));
+        }
+        else if(strcmp(pCmd, "BELLMANFORD") == 0){
+            pCmd = strtok(NULL, " ");
+            int start = pCmd == nullptr ? IN_FINITY : 0;
+            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            PrintError(FindShortestPathBellmanFord(start, end));
+        }
+        else if(strcmp(pCmd, "FLOYD") == 0){
+            PrintError(FindShortestPathFloyd());
+        }
+        else if(strcmp(pCmd, "RABINKARP") == 0){
+            pCmd = strtok(NULL, "\n");
+            PrintError(RabinKarpCompare(pCmd, comparedString.c_str()));
+        }
+        else{
+            PrintError(NonDefinedCommand);
+        }
+    }
 }
 void Manager::PrintError(Result result)
 {
+    ferr << endl << "===================" << endl;
     ferr << "Error code: " << result << std::endl;
+    ferr << "===================" << endl << endl;
 }
 
 /// <summary>
@@ -65,7 +150,7 @@ Result Manager::Print()
 /// Result::InvalidVertexKey or Result::GraphNotExist or Result::InvalidAlgorithm if an exception has occurred.
 /// Result::Success otherwise.
 /// </returns>
-Result Manager::FindPathDfs(int startVertexKey, int endVertexKey)
+Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
 {
     // TODO: implement
 }
@@ -106,6 +191,19 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
 Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey)
 {
     // TODO: implement
+}
+
+/// <summary>
+/// find all of the shortest path with FLOYD
+/// </summary>
+///
+/// <returns>
+/// Result::GraphNotExist or Result::NegativeCycleDetected if exception has occurred.
+/// Result::Success otherwise.
+/// </returns>
+Result Manager::FindShortestPathFloyd()
+{
+    
 }
 
 Result Manager::RabinKarpCompare(const char* CompareString,const char* ComparedString)

@@ -9,7 +9,7 @@ class MinHeap
 {
 private:
     // array for the elements which should be heap-sorted
-    std::vector<std::pair<TKey, TValue>> m_vec;
+    std::vector< std::pair<TKey, TValue> > m_vec;
 
 public:
     MinHeap() {}
