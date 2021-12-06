@@ -91,8 +91,17 @@ void Graph::Print(std::ofstream& fout){
     Vertex* tempV = m_pVHead;
     while(tempV){
         Edge* tempE = tempV->GetHeadOfEdge();
-        while(tempE){
-            fout << tempE->GetWeight() << " ";
+        for(int i = 0; i < Size(); i++){
+            if(tempE == nullptr){
+                fout << "0 ";
+            }
+            else if(tempE->GetKey() > i){
+                fout << "0 ";
+            }
+            else if(tempE->GetKey() == i){
+                fout << tempE->GetWeight() << " ";
+                tempE = tempE->GetNext();
+            }
         }
         fout << endl;
     }
@@ -290,6 +299,10 @@ std::vector<vector<int> > Graph::FindShortestPathFloyd(){
         for(int i = 0; i < m_vSize; i++){
             for(int j = 0; j < m_vSize; j++){
                 int temp = path[i][k] + path[k][j];
+                if(temp + path[j][i] < 0){
+                    path[0][0] = -IN_FINITY;
+                    return path;
+                }
                 if(temp < path[i][j]){
                     path[i][j] = temp;    
                 }

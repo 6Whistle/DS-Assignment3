@@ -20,6 +20,7 @@ private:
     std::ofstream ferr;
     // graph instance to manage the vertics.
     Graph m_graph;
+    string name[100];
 
 public:
     ~Manager();

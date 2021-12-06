@@ -66,34 +66,41 @@ void Manager::Run(const char* filepath)
                 fout << "====================" << endl;
                 PrintError(Success);
             } 
+            fcompare.close();
         }
         else if(strcmp(pCmd, "PRINT") == 0){
-            PrintError(Print());
+            Result r = Print();
+            if(r != Success)  PrintError(r);
         }
         else if(strcmp(pCmd, "BFS") == 0){
             pCmd = strtok(NULL, " ");
             int start = pCmd == nullptr ? IN_FINITY : 0;
             int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
-            PrintError(FindPathBfs(start, end));
+            Result r = FindPathBfs(start, end);
+            if(r != Success)  PrintError(r);
         }
         else if(strcmp(pCmd, "DIJKKSTRA") == 0){
             pCmd = strtok(NULL, " ");
             int start = pCmd == nullptr ? IN_FINITY : 0;
             int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
-            PrintError(FindShortestPathDijkstraUsingSet(start, end));
+            Result r = FindShortestPathDijkstraUsingSet(start, end);
+            if(r != Success)    PrintError(r);
         }
         else if(strcmp(pCmd, "BELLMANFORD") == 0){
             pCmd = strtok(NULL, " ");
             int start = pCmd == nullptr ? IN_FINITY : 0;
             int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
-            PrintError(FindShortestPathBellmanFord(start, end));
+            Result r = FindShortestPathBellmanFord(start, end);
+            if(r != Success)    PrintError(r);
         }
-        else if(strcmp(pCmd, "FLOYD") == 0){
-            PrintError(FindShortestPathFloyd());
+        else if(strcmp(pCmd, "FLOYD") == 0){        
+        Result r = FindShortestPathFloyd();
+            if(r != Success)    PrintError(r);
         }
         else if(strcmp(pCmd, "RABINKARP") == 0){
             pCmd = strtok(NULL, "\n");
-            PrintError(RabinKarpCompare(pCmd, comparedString.c_str()));
+            Result r = RabinKarpCompare(pCmd, comparedString.c_str());
+            if(r != Success)    PrintError(r);
         }
         else{
             PrintError(NonDefinedCommand);
@@ -121,7 +128,42 @@ void Manager::PrintError(Result result)
 /// </returns>
 Result Manager::Load(const char* filepath)
 {
-    // TODO: implement
+    fout << "====== LOAD ======" << endl;
+    ifstream fdata;
+    fdata.open(filepath);
+
+    if(!fdata.is_open()){
+        fout << "LoadFileNotExist" << endl;
+        fout << "====================" << endl;
+        return LoadFileNotExist;
+    }
+
+    char data[50];
+    char *pData;
+    int i = 0;
+
+    while(!fdata.eof()){
+        fdata.getline(data, 50);
+        pData = strtok(data, " / ");
+        name[i] = pData;
+        
+        m_graph.AddVertex(i);
+        
+        pData = strtok(NULL, " ");
+        int j = 0;
+        while(pData){
+            int numData = atoi(pData);
+            if(numData != 0)    m_graph.AddEdge(i, j, numData);
+            pData = strtok(NULL, " ");
+            j++;
+        }
+        i++;
+    }
+
+    fout << "Success" << endl;
+    fout << "====================" << endl;
+    fdata.close();
+    return Success;
 }
 /// <summary>
 /// print out the graph as matrix form
@@ -133,7 +175,17 @@ Result Manager::Load(const char* filepath)
 /// </returns>
 Result Manager::Print()
 {
-    // TODO: implement
+    fout << "====== PRINT ======" << endl;
+
+    if(m_graph.Size() == 0){
+        fout << "GraphNotExist" << endl;
+        fout << "====================" << endl;
+        return GraphNotExist;
+    }
+
+    m_graph.Print(fout);
+    fout << "====================" << endl;
+    return Success;
 }
 /// <summary>
 /// find the path from startVertexKey to endVertexKey with DFS 
@@ -152,7 +204,58 @@ Result Manager::Print()
 /// </returns>
 Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
 {
-    // TODO: implement
+    fout << "====== BFS ======" << endl;
+    
+    if(m_graph.Size() == 0){
+        fout << "GraphNotExist" << endl;
+        fout << "====================" << endl;
+        return GraphNotExist;
+    }
+
+    if(startVertexKey == IN_FINITY){
+        fout << "InvalidVertexKey" << endl;
+        fout << "====================" << endl;
+        return InvalidVertexKey;
+    }
+
+    vector<int> printPath = m_graph.FindPathBfs(startVertexKey, endVertexKey);
+    
+    if(printPath.size() == 0){
+        fout << "VertexKeyNotExist" << endl;
+        fout << "====================" << endl;
+        return VertexKeyNotExist;
+    }
+
+    fout << "shortist path : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << printPath[i] << " ";
+    }
+
+    fout << endl << "path length : ";
+    int length = 0;
+    for(int i = 0; i < printPath.size() - 1; i++){
+        Edge* tempE = m_graph.FindVertex(printPath[i])->GetHeadOfEdge();
+
+        while(tempE){
+            if(tempE->GetKey() == printPath[i+1]){
+                length += tempE->GetWeight();
+                break;
+            }
+            tempE = tempE->GetNext();
+        }
+    } 
+    fout << length << " " << endl;
+    
+    fout << " course : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << name[printPath[i]] << " ";
+    }
+    fout << endl << "====================" << endl;
+
+    if(m_graph.IsNegativeEdge()){
+        return InvalidAlgorithm;;
+    }
+    return Success;
 }
 /// <summary>
 /// find the shortest path from startVertexKey to endVertexKey with Dijkstra using std::set
@@ -171,7 +274,58 @@ Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
 /// </returns>
 Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVertexKey)
 {
-    // TODO: implement
+    fout << "====== DIJKSTRA ======" << endl;
+    
+    if(m_graph.Size() == 0){
+        fout << "GraphNotExist" << endl;
+        fout << "====================" << endl;
+        return GraphNotExist;
+    }
+
+    if(startVertexKey == IN_FINITY){
+        fout << "InvalidVertexKey" << endl;
+        fout << "====================" << endl;
+        return InvalidVertexKey;
+    }
+
+    vector<int> printPath = m_graph.FindShortestPathDijkstraUsingSet(startVertexKey, endVertexKey);
+    
+    if(printPath.size() == 0){
+        fout << "VertexKeyNotExist" << endl;
+        fout << "====================" << endl;
+        return VertexKeyNotExist;
+    }
+
+    fout << "shortist path : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << printPath[i] << " ";
+    }
+
+    fout << endl << "path length : ";
+    int length = 0;
+    for(int i = 0; i < printPath.size() - 1; i++){
+        Edge* tempE = m_graph.FindVertex(printPath[i])->GetHeadOfEdge();
+
+        while(tempE){
+            if(tempE->GetKey() == printPath[i+1]){
+                length += tempE->GetWeight();
+                break;
+            }
+            tempE = tempE->GetNext();
+        }
+    } 
+    fout << length << " " << endl;
+    
+    fout << " course : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << name[printPath[i]] << " ";
+    }
+    fout << endl << "====================" << endl;
+
+    if(m_graph.IsNegativeEdge()){
+        return InvalidAlgorithm;;
+    }
+    return Success;
 }
 /// <summary>
 /// find the shortest path from startVertexKey to endVertexKey with Bellman-Ford
@@ -190,7 +344,55 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
 /// </returns>
 Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey)
 {
-    // TODO: implement
+    fout << "====== BELLMANFORD ======" << endl;
+    
+    if(m_graph.Size() == 0){
+        fout << "GraphNotExist" << endl;
+        fout << "====================" << endl;
+        return GraphNotExist;
+    }
+
+    if(startVertexKey == IN_FINITY){
+        fout << "InvalidVertexKey" << endl;
+        fout << "====================" << endl;
+        return InvalidVertexKey;
+    }
+
+    vector<int> printPath = m_graph.FindShortestPathBellmanFord(startVertexKey, endVertexKey);
+
+    if(printPath.size() == 1 && printPath[0] == -1){
+        fout << "NegativeCycleDetected" << endl;
+        fout << "====================" << endl;
+        return NegativeCycleDetected;
+    }
+
+    fout << "shortist path : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << printPath[i] << " ";
+    }
+
+    fout << endl << "path length : ";
+    int length = 0;
+    for(int i = 0; i < printPath.size() - 1; i++){
+        Edge* tempE = m_graph.FindVertex(printPath[i])->GetHeadOfEdge();
+
+        while(tempE){
+            if(tempE->GetKey() == printPath[i+1]){
+                length += tempE->GetWeight();
+                break;
+            }
+            tempE = tempE->GetNext();
+        }
+    } 
+    fout << length << " " << endl;
+    
+    fout << " course : ";
+    for(int i = 0; i < printPath.size(); i++){
+        fout << name[printPath[i]] << " ";
+    }
+    fout << endl << "====================" << endl;
+
+    return Success;
 }
 
 /// <summary>
@@ -203,10 +405,83 @@ Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey
 /// </returns>
 Result Manager::FindShortestPathFloyd()
 {
+    fout << "====== FLOYD ======" << endl;
     
+    if(m_graph.Size() == 0){
+        fout << "GraphNotExist" << endl;
+        fout << "====================" << endl;
+        return GraphNotExist;
+    }
+
+    vector<vector<int> > printPath = m_graph.FindShortestPathFloyd();
+
+    if(printPath[0][0] == -IN_FINITY){
+        fout << "NegativeCycleDetected" << endl;
+        fout << "====================" << endl;
+        return NegativeCycleDetected;
+    }
+
+    for(int i = 0; i < printPath.size(); i++){
+        for(int j = 0; j < printPath[i].size(); j++){
+            fout << printPath[i][j] << " ";
+        }
+        fout << endl;
+    }
+    fout << endl << "====================" << endl;
+
+    return Success;
 }
 
-Result Manager::RabinKarpCompare(const char* CompareString,const char* ComparedString)
+Result Manager::RabinKarpCompare(const char* CompareString, const char* ComparedString)
 {
-    // TODO: implement
+    fout << "====== RABINKARP ======" << endl;
+    int compareSum = 0;
+
+    int i = 0;
+    for(;CompareString[i] != '\0'; i++){
+        compareSum *= 2;
+        compareSum += (int)(CompareString[i]);
+    }
+
+    if(compareSum < 0){
+        fout << "InvalidOptionNumber" << endl;
+        fout << "====================" << endl;
+        return InvalidOptionNumber;
+    }
+
+    int sum = 0;
+    int mul = 1;
+    for(int k = 0; k < i-1; k++){
+        mul *= 2;    
+    }
+
+    for(int j = 0; ComparedString[j] != '\0'; j++){
+        sum *= 2;
+        sum += (int)(ComparedString[j]);
+
+        if(j < i)   continue;
+        sum -= (mul * ComparedString[j - i]);
+        
+        if(sum == compareSum){
+            bool state = true;
+            for(int temp = 0; temp < i; temp++){
+                if(CompareString[temp] != ComparedString[j - (i - 1) + temp]){
+                    state = false;
+                    break;
+                }
+            }
+            if(state == true){
+                fout << "DUPLICATE TITLE EXISTS" << endl;
+                for(int temp = 0; temp < j; temp++){
+                    fout << ComparedString[temp];
+                }
+                fout << endl << "====================" << endl;
+                return Success;
+            }
+        }
+    }
+
+    fout << "NO DUPLICATE TITLE EXISTS" << endl;
+    fout << "====================" << endl;
+    return Success;
 }

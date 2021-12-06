@@ -1,7 +1,10 @@
 #include "Vertex.h"
 
 Vertex::Vertex(){
-
+    m_key = -1;
+    m_size = -1;
+    m_pEHead = nullptr;
+    m_pNext = nullptr;
 }
 Vertex::Vertex(int key){
     m_key = key;
