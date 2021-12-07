@@ -6,14 +6,11 @@ Manager::~Manager()
     if (fout.is_open())
         fout.close();
 
-    if (ferr.is_open())
-        ferr.close();
 }
 
 void Manager::Run(const char* filepath)
 {
     fout.open(RESULT_LOG_PATH);
-    ferr.open(ERROR_LOG_PATH, ios::app);
 
     ifstream fin;
     fin.open(filepath);
@@ -21,7 +18,7 @@ void Manager::Run(const char* filepath)
     if(!fin.is_open()){
         ferr << "====== SYSTEM ======" << endl <<
         "CommandFileNotExist" << endl <<
-        "====================" << endl;
+        "====================" << endl << endl;
         return;
     }
 
@@ -33,7 +30,7 @@ void Manager::Run(const char* filepath)
         fin.getline(cmd, 50);
         pCmd = strtok(cmd, " ");
 
-        if(pCmd == nullptr){
+        if(pCmd == NULL){
             continue;
         }
         else if(pCmd[0] == '/' && pCmd[1] == '/'){
@@ -52,7 +49,7 @@ void Manager::Run(const char* filepath)
 
             if(!fcompare.is_open()){
                 fout << "FaildtoUpdatePath" << endl;
-                fout << "====================" << endl;
+                fout << "====================" << endl << endl;
                 PrintError(FaildtoUpdatePath);
             }
             else{
@@ -63,7 +60,7 @@ void Manager::Run(const char* filepath)
                     comparedString.push_back(ch);
                 }
                 fout << "Success" << endl;
-                fout << "====================" << endl;
+                fout << "====================" << endl << endl;
                 PrintError(Success);
             } 
             fcompare.close();
@@ -74,22 +71,22 @@ void Manager::Run(const char* filepath)
         }
         else if(strcmp(pCmd, "BFS") == 0){
             pCmd = strtok(NULL, " ");
-            int start = pCmd == nullptr ? IN_FINITY : 0;
-            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            int start = pCmd != NULL ? IN_FINITY : 0;
+            int end = pCmd != NULL ? IN_FINITY : m_graph.Size();
             Result r = FindPathBfs(start, end);
             if(r != Success)  PrintError(r);
         }
-        else if(strcmp(pCmd, "DIJKKSTRA") == 0){
+        else if(strcmp(pCmd, "DIJKSTRA") == 0){
             pCmd = strtok(NULL, " ");
-            int start = pCmd == nullptr ? IN_FINITY : 0;
-            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            int start = pCmd != NULL ? IN_FINITY : 0;
+            int end = pCmd != NULL ? IN_FINITY : m_graph.Size();
             Result r = FindShortestPathDijkstraUsingSet(start, end);
             if(r != Success)    PrintError(r);
         }
         else if(strcmp(pCmd, "BELLMANFORD") == 0){
             pCmd = strtok(NULL, " ");
-            int start = pCmd == nullptr ? IN_FINITY : 0;
-            int end = pCmd == nullptr ? IN_FINITY : m_graph.Size();
+            int start = pCmd != NULL ? IN_FINITY : 0;
+            int end = pCmd != NULL ? IN_FINITY : m_graph.Size();
             Result r = FindShortestPathBellmanFord(start, end);
             if(r != Success)    PrintError(r);
         }
@@ -109,9 +106,9 @@ void Manager::Run(const char* filepath)
 }
 void Manager::PrintError(Result result)
 {
-    ferr << endl << "===================" << endl;
-    ferr << "Error code: " << result << std::endl;
-    ferr << "===================" << endl << endl;
+    fout << endl << "===================" << endl;
+    fout << "Error code: " << result << std::endl;
+    fout << "===================" << endl << endl;
 }
 
 /// <summary>
@@ -134,17 +131,17 @@ Result Manager::Load(const char* filepath)
 
     if(!fdata.is_open()){
         fout << "LoadFileNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return LoadFileNotExist;
     }
 
-    char data[50];
+    char data[100];
     char *pData;
     int i = 0;
 
     while(!fdata.eof()){
-        fdata.getline(data, 50);
-        pData = strtok(data, " / ");
+        fdata.getline(data, 100);
+        pData = strtok(data, "/");
         name[i] = pData;
         
         m_graph.AddVertex(i);
@@ -161,7 +158,7 @@ Result Manager::Load(const char* filepath)
     }
 
     fout << "Success" << endl;
-    fout << "====================" << endl;
+    fout << "====================" << endl << endl;
     fdata.close();
     return Success;
 }
@@ -179,12 +176,12 @@ Result Manager::Print()
 
     if(m_graph.Size() == 0){
         fout << "GraphNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return GraphNotExist;
     }
 
     m_graph.Print(fout);
-    fout << "====================" << endl;
+    fout << "====================" << endl << endl;
     return Success;
 }
 /// <summary>
@@ -208,13 +205,13 @@ Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
     
     if(m_graph.Size() == 0){
         fout << "GraphNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return GraphNotExist;
     }
 
     if(startVertexKey == IN_FINITY){
         fout << "InvalidVertexKey" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return InvalidVertexKey;
     }
 
@@ -222,22 +219,22 @@ Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
     
     if(printPath.size() == 0){
         fout << "VertexKeyNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return VertexKeyNotExist;
     }
 
     fout << "shortist path : ";
-    for(int i = 0; i < printPath.size(); i++){
+    for(int i = printPath.size() - 1; i >= 0; i--){
         fout << printPath[i] << " ";
     }
 
     fout << endl << "path length : ";
     int length = 0;
-    for(int i = 0; i < printPath.size() - 1; i++){
+    for(int i = printPath.size() - 1; i >= 1; i--){
         Edge* tempE = m_graph.FindVertex(printPath[i])->GetHeadOfEdge();
 
         while(tempE){
-            if(tempE->GetKey() == printPath[i+1]){
+            if(tempE->GetKey() == printPath[i-1]){
                 length += tempE->GetWeight();
                 break;
             }
@@ -247,10 +244,10 @@ Result Manager::FindPathBfs(int startVertexKey, int endVertexKey)
     fout << length << " " << endl;
     
     fout << " course : ";
-    for(int i = 0; i < printPath.size(); i++){
+    for(int i = printPath.size() - 1; i >= 0; i--){
         fout << name[printPath[i]] << " ";
     }
-    fout << endl << "====================" << endl;
+    fout << endl << "====================" << endl << endl;
 
     if(m_graph.IsNegativeEdge()){
         return InvalidAlgorithm;;
@@ -278,13 +275,13 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
     
     if(m_graph.Size() == 0){
         fout << "GraphNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return GraphNotExist;
     }
 
     if(startVertexKey == IN_FINITY){
         fout << "InvalidVertexKey" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return InvalidVertexKey;
     }
 
@@ -292,7 +289,7 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
     
     if(printPath.size() == 0){
         fout << "VertexKeyNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return VertexKeyNotExist;
     }
 
@@ -320,7 +317,7 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
     for(int i = 0; i < printPath.size(); i++){
         fout << name[printPath[i]] << " ";
     }
-    fout << endl << "====================" << endl;
+    fout << endl << "====================" << endl << endl;
 
     if(m_graph.IsNegativeEdge()){
         return InvalidAlgorithm;;
@@ -348,13 +345,13 @@ Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey
     
     if(m_graph.Size() == 0){
         fout << "GraphNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return GraphNotExist;
     }
 
     if(startVertexKey == IN_FINITY){
         fout << "InvalidVertexKey" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return InvalidVertexKey;
     }
 
@@ -362,7 +359,7 @@ Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey
 
     if(printPath.size() == 1 && printPath[0] == -1){
         fout << "NegativeCycleDetected" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return NegativeCycleDetected;
     }
 
@@ -390,7 +387,7 @@ Result Manager::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey
     for(int i = 0; i < printPath.size(); i++){
         fout << name[printPath[i]] << " ";
     }
-    fout << endl << "====================" << endl;
+    fout << endl << "====================" << endl << endl;
 
     return Success;
 }
@@ -409,7 +406,7 @@ Result Manager::FindShortestPathFloyd()
     
     if(m_graph.Size() == 0){
         fout << "GraphNotExist" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return GraphNotExist;
     }
 
@@ -417,7 +414,7 @@ Result Manager::FindShortestPathFloyd()
 
     if(printPath[0][0] == -IN_FINITY){
         fout << "NegativeCycleDetected" << endl;
-        fout << "====================" << endl;
+        fout << "====================" << endl << endl;
         return NegativeCycleDetected;
     }
 
@@ -427,9 +424,26 @@ Result Manager::FindShortestPathFloyd()
         }
         fout << endl;
     }
-    fout << endl << "====================" << endl;
+    fout << endl << "====================" << endl << endl;
 
     return Success;
+}
+
+int MakeLowerChar(char ch) {
+    int a;
+    if (isalpha(ch)) {
+        if (isupper(ch)) {
+            a = (int)tolower(ch);
+        }
+        else {
+            a = (int)ch;
+        }
+    }
+    else {
+        a = (int)ch;
+    }
+
+    return a;
 }
 
 Result Manager::RabinKarpCompare(const char* CompareString, const char* ComparedString)
@@ -438,50 +452,52 @@ Result Manager::RabinKarpCompare(const char* CompareString, const char* Compared
     int compareSum = 0;
 
     int i = 0;
+
     for(;CompareString[i] != '\0'; i++){
         compareSum *= 2;
-        compareSum += (int)(CompareString[i]);
+        compareSum += MakeLowerChar(CompareString[i]);
+        if (compareSum < 0) {
+            fout << "InvalidOptionNumber" << endl;
+            fout << "====================" << endl << endl;
+            return InvalidOptionNumber;
+        }
     }
 
-    if(compareSum < 0){
-        fout << "InvalidOptionNumber" << endl;
-        fout << "====================" << endl;
-        return InvalidOptionNumber;
-    }
 
     int sum = 0;
     int mul = 1;
-    for(int k = 0; k < i-1; k++){
+    for(int k = 0; k < i; k++){
         mul *= 2;    
     }
 
     for(int j = 0; ComparedString[j] != '\0'; j++){
         sum *= 2;
-        sum += (int)(ComparedString[j]);
+        sum += MakeLowerChar(ComparedString[j]);
 
-        if(j < i)   continue;
-        sum -= (mul * ComparedString[j - i]);
+        if (j >= i) {
+            sum -= (mul * MakeLowerChar(ComparedString[j - i]));
+        }
         
         if(sum == compareSum){
             bool state = true;
             for(int temp = 0; temp < i; temp++){
-                if(CompareString[temp] != ComparedString[j - (i - 1) + temp]){
+                if(MakeLowerChar(CompareString[temp]) != MakeLowerChar(ComparedString[j - (i - 1) + temp])){
                     state = false;
                     break;
                 }
             }
             if(state == true){
                 fout << "DUPLICATE TITLE EXISTS" << endl;
-                for(int temp = 0; temp < j; temp++){
+                for(int temp = 0; temp <= j; temp++){
                     fout << ComparedString[temp];
                 }
-                fout << endl << "====================" << endl;
+                fout << endl << "====================" << endl << endl;
                 return Success;
             }
         }
     }
 
     fout << "NO DUPLICATE TITLE EXISTS" << endl;
-    fout << "====================" << endl;
+    fout << "====================" << endl << endl;
     return Success;
 }

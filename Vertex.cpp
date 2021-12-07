@@ -3,14 +3,14 @@
 Vertex::Vertex(){
     m_key = -1;
     m_size = -1;
-    m_pEHead = nullptr;
-    m_pNext = nullptr;
+    m_pEHead = NULL;
+    m_pNext = NULL;
 }
 Vertex::Vertex(int key){
     m_key = key;
     m_size = 0;
-    m_pEHead = nullptr;
-    m_pNext = nullptr;
+    m_pEHead = NULL;
+    m_pNext = NULL;
 }
 Vertex::~Vertex(){
 
@@ -37,7 +37,7 @@ int Vertex::Size() const{
 void Vertex::AddEdge(int edgeKey, int weight){
     Edge* newEdge = new Edge(edgeKey, weight);
 
-    if(m_pEHead == nullptr){
+    if(m_pEHead == NULL){
         m_pEHead = newEdge;
         m_size++;
         return;
@@ -57,7 +57,7 @@ Edge* Vertex::GetHeadOfEdge() const{
 }
 
 void Vertex::Clear(){
-    if(m_pEHead == nullptr){
+    if(m_pEHead == NULL){
         return;
     }
 

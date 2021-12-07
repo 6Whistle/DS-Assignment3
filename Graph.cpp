@@ -1,6 +1,5 @@
 #include "Graph.h"
-#include "Stack.h"
-#include "MinHeap.h"
+#include <stack>
 #include <set>
 #include <queue>
 #include <vector>
@@ -10,7 +9,7 @@
 
 Graph::Graph()
 {
-    m_pVHead = nullptr;
+    m_pVHead = NULL;
     m_vSize = 0;
 }
 Graph::~Graph()
@@ -21,10 +20,10 @@ Graph::~Graph()
     // add vertex with vertexNum at the end of the linked list for the vertics
 void Graph::AddVertex(int vertexKey){
     Vertex* newVertex = new Vertex(vertexKey);
+    m_vSize++;
 
-    if(m_pVHead == nullptr){
+    if(m_pVHead == NULL){
         m_pVHead = newVertex;
-        m_vSize++;
         return;
     }
 
@@ -33,13 +32,12 @@ void Graph::AddVertex(int vertexKey){
         temp = temp->GetNext();
     }
     temp->SetNext(newVertex);
-    m_pVHead = newVertex;
     return;
 }
 
     // add edge from the vertex which the number is startVertexKey to the vertex which the number is endVertexKey
 void Graph::AddEdge(int startVertexKey, int endVertexKey, int weight){
-    if(m_pVHead == nullptr){
+    if(m_pVHead == NULL){
         return;
     }
     if(weight == 0){
@@ -67,7 +65,7 @@ Vertex* Graph::FindVertex(int key){
         }
         temp = temp->GetNext();
     }
-    return nullptr;
+    return NULL;
 }
 
     // get the number of the vertics
@@ -92,7 +90,7 @@ void Graph::Print(std::ofstream& fout){
     while(tempV){
         Edge* tempE = tempV->GetHeadOfEdge();
         for(int i = 0; i < Size(); i++){
-            if(tempE == nullptr){
+            if(tempE == NULL){
                 fout << "0 ";
             }
             else if(tempE->GetKey() > i){
@@ -104,6 +102,7 @@ void Graph::Print(std::ofstream& fout){
             }
         }
         fout << endl;
+        tempV = tempV->GetNext();
     }
     return;
 }
@@ -117,7 +116,9 @@ bool Graph::IsNegativeEdge(){
             if(tempE->GetWeight() < 0){
                 return true;
             }
+            tempE = tempE->GetNext();
         }
+        tempV = tempV->GetNext();
     }
     return false;
 }
@@ -131,6 +132,9 @@ std::vector<int> Graph::FindPathBfs(int startVertexKey, int endVertexKey){
     int* visit = new int[m_vSize];      //Check visit
     q.push(make_pair(startVertexKey, startVertexKey));      //Start point
     visit[startVertexKey] = true;
+    for (int i = 1; i < endVertexKey; i++) {
+        visit[i] = false;
+    }
 
     //BFS
     while(!q.empty()){
@@ -146,9 +150,9 @@ std::vector<int> Graph::FindPathBfs(int startVertexKey, int endVertexKey){
 
             if(weight < 0)   continue;                      //if NegWeight, continue
             if(!visit[y]){                                  //if Unvisited Key
-                if(y == endVertexKey){                      //if Unvisited Key is endVertexKey
+                if(y == endVertexKey-1){                      //if Unvisited Key is endVertexKey
                     delete[] visit;
-                    path.push_back(endVertexKey);           //Save End Key
+                    path.push_back(endVertexKey-1);           //Save End Key
                     int curKey = tempV->GetKey();           //Save Current Key
                     path.push_back(curKey);
 
@@ -181,8 +185,10 @@ std::vector<int> Graph::FindShortestPathDijkstraUsingSet(int startVertexKey, int
     }
     distance[startVertexKey] = 0;
 
-    vector<int> path[m_vSize];              //Shortist path
-    
+    vector<vector<int> > path(m_vSize, vector<int>(1, 0));              //Shortist path
+    for (int i = 0; i < m_vSize; i++) {
+        path[i][0] = i;
+    }
 
     set<pair<int, int> > pq;
     pq.insert(make_pair(startVertexKey, 0));    //Start Vertex
@@ -218,7 +224,7 @@ std::vector<int> Graph::FindShortestPathDijkstraUsingSet(int startVertexKey, int
         }
     }
     delete[] distance;
-    return path[endVertexKey];          //Print Path(start -> end)
+    return path[endVertexKey-1];          //Print Path(start -> end)
 }
 
     // find the shortest path from startVertexKey to endVertexKey with Bellman-Ford
@@ -228,7 +234,11 @@ std::vector<int> Graph::FindShortestPathBellmanFord(int startVertexKey, int endV
         distance[i] = IN_FINITY;
     }
     distance[startVertexKey] = 0;
-    vector<int> path[m_vSize];
+
+    vector<vector<int> > path(m_vSize, vector<int>(1, 0));              //Shortist path
+    for (int i = 0; i < m_vSize; i++) {
+        path[i][0] = i;
+    }
 
     Vertex* tempV = m_pVHead;
     while(tempV){
@@ -253,6 +263,7 @@ std::vector<int> Graph::FindShortestPathBellmanFord(int startVertexKey, int endV
         tempV = tempV->GetNext();
     }
 
+    tempV = m_pVHead;
     while(tempV){
         int from = tempV->GetKey();
         Edge* tempE = tempV->GetHeadOfEdge();
@@ -264,25 +275,23 @@ std::vector<int> Graph::FindShortestPathBellmanFord(int startVertexKey, int endV
 
             if(distance[from] == IN_FINITY) continue;
             if(distance[to] > distance[from] + dis){
-                path[endVertexKey].clear();
-                path[endVertexKey].push_back(-1);
+                path[endVertexKey-1].clear();
+                path[endVertexKey-1].push_back(-1);
                 delete[] distance;
-                return path[endVertexKey];
+                return path[endVertexKey-1];
             }
         }
         tempV = tempV->GetNext();
     }
     delete[] distance;
-    return path[endVertexKey];
+    return path[endVertexKey-1];
 }
     
     
 std::vector<vector<int> > Graph::FindShortestPathFloyd(){
-    vector<vector<int> > path;
-    for(int i = 0; i < m_vSize; i++){
-        for(int j = 0; j < m_vSize; j++){
-            path[i][j] = 0;
-        }
+    vector<vector<int> > path(m_vSize, vector<int>(m_vSize, IN_FINITY));              //Shortist path
+    for (int i = 0; i < m_vSize; i++) {
+        path[i][i] = 0;
     }
 
     Vertex* tempV = m_pVHead;

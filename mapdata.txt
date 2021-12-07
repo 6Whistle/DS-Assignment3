@@ -1,7 +1,14 @@
-Our Company / 0 7 5 8 0 0 0
-Denny’s Stationery store / 9 0 8 0 0 0 -19
-Sonnet’s Ai Company / 6 7 0 2 5 0 13
-Tom’s Accountant office / 5 0 0 0 6 6 0
-Harry’s Computer Repair / 0 0 9 0 0 8 0
-Lin’s Medical Company / 0 0 0 6 2 0 7
-Target Company / 0 0 0 0 5 6 0
+Our Company / 0 7 5 8 0 -124 0 1 5 0 0 5 4 0
+Denny’s Stationery store / 9 0 8 0 -52 0 19 4 7 13 84 3 0 0
+Sonnet’s Ai Company / 6 7 0 2 5 -20 13 0 0 5 0 4 0 0
+Tom’s Accountant office / 5 0 0 0 6 6 0 3 0 0 0 -29 0 0
+Harry’s Computer Repair / 0 -23 9 0 0 8 0 3 5 1 21 13 41 21
+Lin’s Medical Company / 0 0 0 6 2 0 7 1 2 3 4 5 6 0
+aTarget Company / 0 0 0 0 5 6 0 0 3 6 9 12 15 0
+aOur Company / 0 7 5 8 0 0 -88 0 0 7 5 1 2 0
+aDenny’s Stationery store / 9 0 8 0 0 -21 19 3 0 4 5 7 8 0
+aSonnet’s Ai Company / 6 7 0 2 5 0 13 0 -291 0 0 8 3 0 
+aTom’s Accountant office / 5 0 -10 0 6 6 0 0 -23 0 0 0 4 0
+aHarry’s Computer Repair / -59 0 9 0 -25 8 0 0 0 11 -123 -28 -90 3
+aLin’s Medical Company / 8 0 -26 6 2 0 7 15 3 5 1 6 7 0 0
+Target Company / 0 0 0 0 5 6 0 0 0 5 3 7 2 0
