@@ -20,15 +20,15 @@ Graph::~Graph()
     // add vertex with vertexNum at the end of the linked list for the vertics
 void Graph::AddVertex(int vertexKey){
     Vertex* newVertex = new Vertex(vertexKey);
-    m_vSize++;
+    m_vSize++;                  //add Vertex
 
-    if(m_pVHead == NULL){
+    if(m_pVHead == NULL){       //if no data is exists
         m_pVHead = newVertex;
         return;
     }
 
     Vertex* temp = m_pVHead;
-    while(temp->GetNext()){
+    while(temp->GetNext()){     //if data is exist
         temp = temp->GetNext();
     }
     temp->SetNext(newVertex);
@@ -37,17 +37,17 @@ void Graph::AddVertex(int vertexKey){
 
     // add edge from the vertex which the number is startVertexKey to the vertex which the number is endVertexKey
 void Graph::AddEdge(int startVertexKey, int endVertexKey, int weight){
-    if(m_pVHead == NULL){
+    if(m_pVHead == NULL){       //if no Vertex is exists, return
         return;
     }
-    if(weight == 0){
+    if(weight == 0){            //if weight is 0, return
         return;
     }
 
     Vertex* temp = m_pVHead;
-    while(temp)
+    while(temp)                 //finding Vertex(Starting Vertex)
     {
-        if(temp->GetKey() == startVertexKey){
+        if(temp->GetKey() == startVertexKey){       //input Edge at Starting Vertex
             temp->AddEdge(endVertexKey, weight);
             return;
         }
@@ -59,7 +59,7 @@ void Graph::AddEdge(int startVertexKey, int endVertexKey, int weight){
     // get the vertex which the key is vertexNum
 Vertex* Graph::FindVertex(int key){
     Vertex* temp = m_pVHead;
-    while(temp){
+    while(temp){                        //if(same Key is exists, return address)
         if(temp->GetKey() == key){
             return temp;
         }
@@ -75,9 +75,9 @@ int Graph::Size() const{
     // memory free for the vertics
 void Graph::Clear(){
     Vertex* temp = m_pVHead;
-    while(m_pVHead){
+    while(m_pVHead){        //Clear Vertex
         m_pVHead = m_pVHead->GetNext();
-        temp->Clear();
+        temp->Clear();      //Clear Edge
         delete temp;
         temp = m_pVHead;
     }
@@ -87,16 +87,16 @@ void Graph::Clear(){
     // print out the graph as matrix form
 void Graph::Print(std::ofstream& fout){
     Vertex* tempV = m_pVHead;
-    while(tempV){
+    while(tempV){       //Print all of Vertex
         Edge* tempE = tempV->GetHeadOfEdge();
         for(int i = 0; i < Size(); i++){
-            if(tempE == NULL){
+            if(tempE == NULL){      //if tempE is not exist
                 fout << "0 ";
             }
-            else if(tempE->GetKey() > i){
+            else if(tempE->GetKey() > i){       //if edge is not exists
                 fout << "0 ";
             }
-            else if(tempE->GetKey() == i){
+            else if(tempE->GetKey() == i){      //if edge is exists
                 fout << tempE->GetWeight() << " ";
                 tempE = tempE->GetNext();
             }
@@ -110,17 +110,17 @@ void Graph::Print(std::ofstream& fout){
     // check whether the graph has negative edge or not.
 bool Graph::IsNegativeEdge(){
     Vertex* tempV = m_pVHead;
-    while(tempV){
+    while(tempV){           //Check Vertex
         Edge* tempE = tempV->GetHeadOfEdge();
-        while(tempE){
-            if(tempE->GetWeight() < 0){
+        while(tempE){           //Check Edge
+            if(tempE->GetWeight() < 0){     //if Neg Edge is exists, return true
                 return true;
             }
             tempE = tempE->GetNext();
         }
         tempV = tempV->GetNext();
     }
-    return false;
+    return false;       //if Neg edge is not exists, return false
 }
 
     // find the path from startVertexKey to endVertexKey with BFS
@@ -180,7 +180,7 @@ std::vector<int> Graph::FindPathBfs(int startVertexKey, int endVertexKey){
     // find the shortest path from startVertexKey to endVertexKey with Dijkstra using std::set
 std::vector<int> Graph::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVertexKey){
     int* distance = new int[m_vSize];       //distance
-    for(int i = 0; i < m_vSize; i++){
+    for(int i = 0; i < m_vSize; i++){       //distance initialize
         distance[i] = IN_FINITY;
     }
     distance[startVertexKey] = 0;
@@ -229,31 +229,32 @@ std::vector<int> Graph::FindShortestPathDijkstraUsingSet(int startVertexKey, int
 
     // find the shortest path from startVertexKey to endVertexKey with Bellman-Ford
 std::vector<int> Graph::FindShortestPathBellmanFord(int startVertexKey, int endVertexKey){
-    int* distance = new int[m_vSize];
-    for(int i = 0; i < m_vSize; i++){
+    int* distance = new int[m_vSize];           //distance
+    for(int i = 0; i < m_vSize; i++){           //distance initalize
         distance[i] = IN_FINITY;
     }
     distance[startVertexKey] = 0;
 
     vector<vector<int> > path(m_vSize, vector<int>(1, 0));              //Shortist path
-    for (int i = 0; i < m_vSize; i++) {
+    for (int i = 0; i < m_vSize; i++) {                                 //Shortist path initialize
         path[i][0] = i;
     }
 
     Vertex* tempV = m_pVHead;
     while(tempV){
-        int from = tempV->GetKey();
+        int from = tempV->GetKey();         //start vertex
         Edge* tempE = tempV->GetHeadOfEdge();
         while(tempE){
-            int to = tempE->GetKey();
-            int dis = tempE->GetWeight();
+            int to = tempE->GetKey();       //end vertex
+            int dis = tempE->GetWeight();   //start->end edge's weight
             
             tempE = tempE->GetNext();
 
-            if(distance[from] == IN_FINITY) continue;
-            if(distance[to] > distance[from] + dis){
-                distance[to] = distance[from] + dis;
-                path[to].clear();
+            if(distance[from] == IN_FINITY) continue;   //if start point is infinity, continue
+            if(distance[to] > distance[from] + dis){    //if start->end edge is shorter than calculate before
+                distance[to] = distance[from] + dis;    //distance update
+                
+                path[to].clear();                       //path update
                 for(int i = 0; i < path[from].size(); i++){
                     path[to].push_back(path[from][i]);
                 }
@@ -263,60 +264,64 @@ std::vector<int> Graph::FindShortestPathBellmanFord(int startVertexKey, int endV
         tempV = tempV->GetNext();
     }
 
-    tempV = m_pVHead;
-    while(tempV){
+    tempV = FindVertex(m_vSize-1);
+    //Check Negative cycle
+    while(tempV){           //check Vertex
         int from = tempV->GetKey();
         Edge* tempE = tempV->GetHeadOfEdge();
-        while(tempE){
+        while(tempE){           //check edge
             int to = tempE->GetKey();
             int dis = tempE->GetWeight();
             
             tempE = tempE->GetNext();
 
-            if(distance[from] == IN_FINITY) continue;
-            if(distance[to] > distance[from] + dis){
+            if(distance[from] == IN_FINITY) continue;       //if distance is still infinity, continue
+            if(distance[to] > distance[from] + dis){        //if negative cycle exist, return -IN_FINITY path
                 path[endVertexKey-1].clear();
-                path[endVertexKey-1].push_back(-1);
+                path[endVertexKey-1].push_back(-IN_FINITY);
                 delete[] distance;
                 return path[endVertexKey-1];
             }
         }
         tempV = tempV->GetNext();
     }
+
     delete[] distance;
-    return path[endVertexKey-1];
+    return path[endVertexKey-1];        //return path
 }
     
-    
+    //find all of shortist path by matrix with Floyd
 std::vector<vector<int> > Graph::FindShortestPathFloyd(){
     vector<vector<int> > path(m_vSize, vector<int>(m_vSize, IN_FINITY));              //Shortist path
-    for (int i = 0; i < m_vSize; i++) {
+    for (int i = 0; i < m_vSize; i++) {         //path initialize
         path[i][i] = 0;
     }
 
+    //input matrix's path
     Vertex* tempV = m_pVHead;
-    while(tempV){
+    while(tempV){           //check Vertex
         Edge* tempE = tempV->GetHeadOfEdge();
-        while(tempE){
+        while(tempE){       //check edge
             path[tempV->GetKey()][tempE->GetKey()] = tempE->GetWeight();
             tempE = tempE->GetNext();
         }
         tempV = tempV->GetNext();
     }
 
+    //Floyd algorithm
     for(int k = 0; k < m_vSize; k++){
         for(int i = 0; i < m_vSize; i++){
             for(int j = 0; j < m_vSize; j++){
                 int temp = path[i][k] + path[k][j];
-                if(temp + path[j][i] < 0){
+                if(temp + path[j][i] < 0){              //if i->k->j->i is negative, return -IN_FINITY path
                     path[0][0] = -IN_FINITY;
                     return path;
                 }
-                if(temp < path[i][j]){
+                if(temp < path[i][j]){                  //if i->k + k->j < i->j, update i->j
                     path[i][j] = temp;    
                 }
             }
         }
     }
-    return path;
+    return path;        //return path
 }

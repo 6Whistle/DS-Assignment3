@@ -6,14 +6,14 @@ Edge::Edge(){
     m_pNext = NULL;
 }
 
-/// copy constructor
+// copy constructor
 Edge::Edge(int key, int weight){
     m_key = key;
     m_weight = weight;
     m_pNext = NULL;
 }
 
-    /// set the next pointer of this edge
+// set the next pointer of this edge
 void Edge::SetNext(Edge* pNext){
     m_pNext = pNext;
     return;

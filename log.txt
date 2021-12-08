@@ -33,7 +33,7 @@ Success
 Error code: 0
 ===================
 
-====== BFS ======
+====== InvalidAlgorithm ======
 shortist path : 0 11 13 
 path length : 8 
  course : Our Company  aHarry’s Computer Repair  Target Company  
@@ -53,7 +53,7 @@ InvalidVertexKey
 Error code: 200
 ===================
 
-====== DIJKSTRA ======
+====== InvalidAlgorithm ======
 shortist path : 0 7 11 13 
 path length : 5 
  course : Our Company  aOur Company  aHarry’s Computer Repair  Target Company  
