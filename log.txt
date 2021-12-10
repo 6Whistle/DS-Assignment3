@@ -8,7 +8,7 @@ Error code: 0
 ===================
 
 ====== PRINT ======
-0 7 5 8 0 -124 0 1 5 0 0 5 4 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 9 0 8 0 -52 0 19 4 7 13 84 3 0 0 
 6 7 0 2 5 -20 13 0 0 5 0 4 0 0 
 5 0 0 0 6 6 0 3 0 0 0 -29 0 0 
@@ -33,15 +33,13 @@ Success
 Error code: 0
 ===================
 
-====== InvalidAlgorithm ======
-shortist path : 0 11 13 
-path length : 8 
- course : Our Company  aHarry’s Computer Repair  Target Company  
+====== BFS ======
+VertexKeyNotExist
 ====================
 
 
 ===================
-Error code: 203
+Error code: 201
 ===================
 
 ====== BFS ======
@@ -53,15 +51,13 @@ InvalidVertexKey
 Error code: 200
 ===================
 
-====== InvalidAlgorithm ======
-shortist path : 0 7 11 13 
-path length : 5 
- course : Our Company  aOur Company  aHarry’s Computer Repair  Target Company  
+====== DIJKSTRA ======
+VertexKeyNotExist
 ====================
 
 
 ===================
-Error code: 203
+Error code: 201
 ===================
 
 ====== BELLMANFORD ======

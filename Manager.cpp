@@ -299,7 +299,7 @@ Result Manager::FindShortestPathDijkstraUsingSet(int startVertexKey, int endVert
 
     vector<int> printPath = m_graph.FindShortestPathDijkstraUsingSet(startVertexKey, endVertexKey); //Execute Dijkstra
     
-    if(printPath.size() == 0){          //if Shortist path doesn't exist
+    if(printPath[0] != 0){          //if Shortist path doesn't exist
         fout << "====== DIJKSTRA ======" << endl;
         fout << "VertexKeyNotExist" << endl;
         fout << "====================" << endl << endl;
